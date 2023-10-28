@@ -1,7 +1,11 @@
 package pwr.chesstournamentsbackend.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "organizer")
 public class Organizer {
@@ -10,8 +14,7 @@ public class Organizer {
     private Integer organizerId;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_user_id")
     private User user;
 
-    // Getters, setters...
 }

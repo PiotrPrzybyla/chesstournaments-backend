@@ -27,4 +27,14 @@ public class CategoryApiController {
         Category savedCategory = categoryService.saveCategory(category);
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
     }
+    @DeleteMapping("/{category_id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable Integer category_id){
+         categoryService.deleteCategory(category_id);
+        return ResponseEntity.noContent().build();
+    }
+    @PutMapping("/{category_id}")
+    public ResponseEntity<Category> updateCategory(@PathVariable Integer category_id, @RequestBody Category category) {
+        Category updatedCategory = categoryService.updateCategory(category_id, category);
+        return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
+    }
 }

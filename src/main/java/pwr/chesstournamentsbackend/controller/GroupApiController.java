@@ -1,10 +1,9 @@
 package pwr.chesstournamentsbackend.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import pwr.chesstournamentsbackend.model.Category;
 import pwr.chesstournamentsbackend.model.Group;
 import pwr.chesstournamentsbackend.service.GroupService;
 
@@ -22,5 +21,20 @@ public class GroupApiController {
         return groupService.findById(group_id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+    @PostMapping
+    public ResponseEntity<Group> createGroup(@RequestBody Group group) {
+        Group savedGroup = groupService.saveCategory(group);
+        return new ResponseEntity<>(savedGroup, HttpStatus.CREATED);
+    }
+    @DeleteMapping("/{group_id}")
+    public ResponseEntity<Void> deleteGroup(@PathVariable Integer group_id){
+        groupService.deleteCategory(group_id);
+        return ResponseEntity.noContent().build();
+    }
+    @PutMapping("/{group_id}")
+    public ResponseEntity<Group> updateGroup(@PathVariable Integer group_id, @RequestBody Group group) {
+        Group updatedGroup = groupService.updateGroup(group_id, group);
+        return new ResponseEntity<>(updatedGroup, HttpStatus.OK);
     }
 }

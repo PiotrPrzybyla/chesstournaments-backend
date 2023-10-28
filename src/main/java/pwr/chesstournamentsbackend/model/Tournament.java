@@ -1,12 +1,15 @@
 package pwr.chesstournamentsbackend.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
+@Setter
+@Getter
 @Entity
 @Table(name = "tournament")
 public class Tournament {
@@ -30,5 +33,4 @@ public class Tournament {
     )
     private Set<User> users = new HashSet<>();
 
-    // Getters, setters...
 }

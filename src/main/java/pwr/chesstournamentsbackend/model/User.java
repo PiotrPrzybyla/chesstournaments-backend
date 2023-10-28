@@ -1,7 +1,12 @@
 package pwr.chesstournamentsbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "user")
 public class User {
@@ -14,8 +19,8 @@ public class User {
     private String age;
     @ManyToOne
     @JoinColumn(name="category_id")
+    @JsonBackReference
     private Category category;
     private String description;
 
-    // Getters, setters...
 }
