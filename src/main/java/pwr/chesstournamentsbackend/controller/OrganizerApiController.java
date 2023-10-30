@@ -8,6 +8,7 @@ import pwr.chesstournamentsbackend.service.OrganizerService;
 
 @RestController
 @RequestMapping("/api/organizer")
+@CrossOrigin(origins = "http://localhost:3000")
 public class OrganizerApiController {
     public final OrganizerService organizerService;
 
@@ -16,8 +17,14 @@ public class OrganizerApiController {
     }
 
     @GetMapping("/{organizer_id}")
-    public ResponseEntity<Organizer> getUserById(@PathVariable Integer organizer_id) {
+    public ResponseEntity<Organizer> getOrganizerById(@PathVariable Integer organizer_id) {
         return organizerService.findById(organizer_id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    @GetMapping("/user/{user_id}")
+    public ResponseEntity<Organizer> getOrganizerByUserUserId(@PathVariable Integer user_id) {
+        return organizerService.findByUserUserId(user_id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

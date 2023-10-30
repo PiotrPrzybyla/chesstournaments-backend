@@ -18,6 +18,7 @@ public class OrganizerService {
     public Optional<Organizer> findById(Integer id) {
         return organizerRepository.findById(id);
     }
+    public Optional<Organizer> findByUserUserId(Integer id) {return organizerRepository.findByUserUserId(id);}
     public Organizer saveOrganizer(Organizer organizer) {
         return organizerRepository.save(organizer);
     }

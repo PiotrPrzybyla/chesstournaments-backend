@@ -16,6 +16,7 @@ public class Tournament {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer tournamentId;
+    private String name;
     private Integer participantsAmount;
     private String address;
     private LocalDateTime date;

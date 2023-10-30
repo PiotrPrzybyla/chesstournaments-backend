@@ -8,6 +8,7 @@ import pwr.chesstournamentsbackend.service.UserService;
 
 @RestController
 @RequestMapping("/api/user")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserApiController {
     public final UserService userService;
 
