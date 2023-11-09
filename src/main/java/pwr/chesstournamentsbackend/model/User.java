@@ -1,9 +1,13 @@
 package pwr.chesstournamentsbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -22,5 +26,7 @@ public class User {
     @JsonBackReference
     private Category category;
     private String description;
-
+    @ManyToMany(mappedBy = "users")
+    @JsonBackReference
+    private Set<Tournament> tournaments = new HashSet<>();
 }

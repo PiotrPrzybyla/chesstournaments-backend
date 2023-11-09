@@ -3,6 +3,7 @@ package pwr.chesstournamentsbackend.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pwr.chesstournamentsbackend.dto.CreateTournamentDTO;
 import pwr.chesstournamentsbackend.dto.JoinTournamentDTO;
 import pwr.chesstournamentsbackend.dto.ResponseMessage;
 import pwr.chesstournamentsbackend.model.Tournament;
@@ -23,9 +24,9 @@ public class TournamentApiController {
         this.tournamentService = tournamentService;
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Tournament>> getAllTournaments() {
-        List<Tournament> tournaments = tournamentService.getAllOrganizers();
+    @GetMapping("/all/{user_id}")
+    public ResponseEntity<List<Tournament>> getAllTournaments(@PathVariable Integer user_id) {
+        List<Tournament> tournaments = tournamentService.getAllTournaments(user_id);
         return new ResponseEntity<>(tournaments, HttpStatus.OK);
     }
     @GetMapping("/{tournament_id}")
@@ -35,7 +36,7 @@ public class TournamentApiController {
                 .orElse(ResponseEntity.notFound().build());
     }
     @PostMapping
-    public ResponseEntity<Tournament> createTournament(@RequestBody Tournament tournament) {
+    public ResponseEntity<Tournament> createTournament(@RequestBody CreateTournamentDTO tournament) {
         Tournament savedTournament = tournamentService.saveTournament(tournament);
         return new ResponseEntity<>(savedTournament, HttpStatus.CREATED);
     }
@@ -71,6 +72,14 @@ public class TournamentApiController {
         response.put("isMember", isMember);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Tournament>> getTournamentsByUser(@PathVariable Integer userId) {
+        List<Tournament> userTournaments = tournamentService.getTournamentsByUser(userId);
+        if(userTournaments.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(userTournaments, HttpStatus.OK);
     }
 
 }

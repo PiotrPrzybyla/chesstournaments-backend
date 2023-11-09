@@ -28,9 +28,9 @@ public class OrganizerApiController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    @PostMapping
-    public ResponseEntity<Organizer> createOrganizer(@RequestBody Organizer organizer) {
-        Organizer savedOrganizer = organizerService.saveOrganizer(organizer);
+    @PostMapping("user/{user_id}")
+    public ResponseEntity<Organizer> createOrganizer(@PathVariable Integer user_id) {
+        Organizer savedOrganizer = organizerService.saveOrganizer(user_id);
         return new ResponseEntity<>(savedOrganizer, HttpStatus.CREATED);
     }
 
