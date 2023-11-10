@@ -1,7 +1,6 @@
 package pwr.chesstournamentsbackend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +20,8 @@ public class User {
     private String name;
     private String surname;
     private String age;
+    private String uid;
+    private String email;
     @ManyToOne
     @JoinColumn(name="category_id")
     @JsonBackReference

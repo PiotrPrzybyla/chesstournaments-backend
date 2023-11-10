@@ -32,7 +32,7 @@ public class TournamentService {
 
     public List<Tournament> getAllTournaments(Integer userId) {
         LocalDateTime today = LocalDateTime.now();
-        List<Tournament> allTournaments = tournamentRepository.findByDateAfter(today); // Fetch only future tournaments
+        List<Tournament> allTournaments = tournamentRepository.findByDateAfter(today);
         Set<Tournament> userTournaments = userRepository.findById(userId)
                 .map(User::getTournaments)
                 .orElse(Collections.emptySet());
@@ -42,7 +42,33 @@ public class TournamentService {
                 .collect(Collectors.toList());
     }
     public List<Tournament> getTournamentsByUser(Integer userId) {
-        return tournamentRepository.findByUsers_userId(userId);
+        LocalDateTime today = LocalDateTime.now();
+        List<Tournament> allTournaments = tournamentRepository.findByDateAfter(today);
+        Set<Tournament> userTournaments = userRepository.findById(userId)
+                .map(User::getTournaments)
+                .orElse(Collections.emptySet());
+
+        return allTournaments.stream()
+                .filter(userTournaments::contains)
+                .collect(Collectors.toList());
+    }
+    public List<Tournament> getActiveTournamentsByOrganizer(Integer organizerId){
+        LocalDateTime today = LocalDateTime.now();
+        List<Tournament> allTournaments = tournamentRepository.findByDateAfter(today);
+        List<Tournament> organizerTournaments = tournamentRepository.findByOrganizer_OrganizerId(organizerId);
+
+        return allTournaments.stream()
+                .filter(organizerTournaments::contains)
+                .collect(Collectors.toList());
+    }
+    public List<Tournament> getPastTournamentsByOrganizer(Integer organizerId){
+        LocalDateTime today = LocalDateTime.now();
+        List<Tournament> allTournaments = tournamentRepository.findByDateBefore(today);
+        List<Tournament> organizerTournaments = tournamentRepository.findByOrganizer_OrganizerId(organizerId);
+
+        return allTournaments.stream()
+                .filter(organizerTournaments::contains)
+                .collect(Collectors.toList());
     }
     public Optional<Tournament> findById(Integer id) {
         return tournamentRepository.findById(id);

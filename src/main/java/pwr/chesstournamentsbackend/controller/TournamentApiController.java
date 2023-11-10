@@ -81,5 +81,21 @@ public class TournamentApiController {
         }
         return new ResponseEntity<>(userTournaments, HttpStatus.OK);
     }
+    @GetMapping("/organizer/past/{organizerId}")
+    public ResponseEntity<List<Tournament>> getPastTournamentsByOrganizer(@PathVariable Integer organizerId) {
+        List<Tournament> userTournaments = tournamentService.getPastTournamentsByOrganizer(organizerId);
+        if(userTournaments.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(userTournaments, HttpStatus.OK);
+    }
+    @GetMapping("/organizer/active/{organizerId}")
+    public ResponseEntity<List<Tournament>> getActiveTournamentsByOrganizer(@PathVariable Integer organizerId) {
+        List<Tournament> userTournaments = tournamentService.getActiveTournamentsByOrganizer(organizerId);
+        if(userTournaments.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(userTournaments, HttpStatus.OK);
+    }
 
 }

@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Setter
 @Getter
 @Entity
@@ -17,5 +20,4 @@ public class Organizer {
     @OneToOne
     @JoinColumn(name = "user_user_id")
     private User user;
-
 }
