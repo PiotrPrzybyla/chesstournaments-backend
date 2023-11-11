@@ -35,7 +35,7 @@ public class UserService {
     public void deleteUser(Integer id) {
         userRepository.deleteById(id);
     }
-    public Optional<User> getUserByUid(String uid) {
+    public Optional<User> findUserByUid(String uid) {
         return userRepository.findByUid(uid);
     }
 

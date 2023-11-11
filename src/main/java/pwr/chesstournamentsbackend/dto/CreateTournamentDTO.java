@@ -17,7 +17,5 @@ public class CreateTournamentDTO {
     private String date;
     @JsonProperty
     private String description;
-    @JsonProperty
-    private Integer organizerId;
 
 }

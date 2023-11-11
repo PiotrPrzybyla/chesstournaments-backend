@@ -23,12 +23,13 @@ public class OrganizerService {
         return organizerRepository.findById(id);
     }
     public Optional<Organizer> findByUserUserId(Integer id) {return organizerRepository.findByUserUserId(id);}
+    public Optional<Organizer> findByUserUid(String uid) {return organizerRepository.findByUserUid(uid);}
     public Organizer saveOrganizer(Organizer organizer) {
 
         return organizerRepository.save(organizer);
     }
-    public Organizer saveOrganizer(Integer userId){
-        Optional<User> user = userRepository.findById(userId);
+    public Organizer saveOrganizer(String uid){
+        Optional<User> user = userRepository.findByUid(uid);
         Organizer organizer = new Organizer();
         if(user.isPresent()){
             organizer.setUser(user.get());

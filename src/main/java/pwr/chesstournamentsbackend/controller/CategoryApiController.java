@@ -3,6 +3,7 @@ package pwr.chesstournamentsbackend.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pwr.chesstournamentsbackend.dto.ResponseMessage;
 import pwr.chesstournamentsbackend.model.Category;
 import pwr.chesstournamentsbackend.model.User;
 import pwr.chesstournamentsbackend.service.CategoryService;
@@ -28,9 +29,9 @@ public class CategoryApiController {
         return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
     }
     @DeleteMapping("/{category_id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Integer category_id){
+    public ResponseEntity<ResponseMessage> deleteCategory(@PathVariable Integer category_id){
          categoryService.deleteCategory(category_id);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>( new ResponseMessage("Category Deleted"), HttpStatus.NO_CONTENT);
     }
     @PutMapping("/{category_id}")
     public ResponseEntity<Category> updateCategory(@PathVariable Integer category_id, @RequestBody Category category) {

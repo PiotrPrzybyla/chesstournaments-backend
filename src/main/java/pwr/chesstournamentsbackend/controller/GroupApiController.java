@@ -3,6 +3,7 @@ package pwr.chesstournamentsbackend.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pwr.chesstournamentsbackend.dto.ResponseMessage;
 import pwr.chesstournamentsbackend.model.Category;
 import pwr.chesstournamentsbackend.model.Group;
 import pwr.chesstournamentsbackend.service.GroupService;
@@ -28,9 +29,9 @@ public class GroupApiController {
         return new ResponseEntity<>(savedGroup, HttpStatus.CREATED);
     }
     @DeleteMapping("/{group_id}")
-    public ResponseEntity<Void> deleteGroup(@PathVariable Integer group_id){
+    public ResponseEntity<ResponseMessage> deleteGroup(@PathVariable Integer group_id){
         groupService.deleteCategory(group_id);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(new ResponseMessage("Group Deleted"), HttpStatus.NO_CONTENT);
     }
     @PutMapping("/{group_id}")
     public ResponseEntity<Group> updateGroup(@PathVariable Integer group_id, @RequestBody Group group) {

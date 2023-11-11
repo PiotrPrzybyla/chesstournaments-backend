@@ -4,7 +4,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pwr.chesstournamentsbackend.dto.CreateTournamentDTO;
-import pwr.chesstournamentsbackend.dto.JoinTournamentDTO;
 import pwr.chesstournamentsbackend.model.Organizer;
 import pwr.chesstournamentsbackend.model.Tournament;
 import pwr.chesstournamentsbackend.model.User;
@@ -12,7 +11,6 @@ import pwr.chesstournamentsbackend.repository.OrganizerRepository;
 import pwr.chesstournamentsbackend.repository.TournamentRepository;
 import pwr.chesstournamentsbackend.repository.UserRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -29,11 +27,14 @@ public class TournamentService {
         this.userRepository = userRepository;
         this.organizerRepository = organizerRepository;
     }
-
-    public List<Tournament> getAllTournaments(Integer userId) {
+    public List<Tournament> getAllTournaments(){
+        LocalDateTime today = LocalDateTime.now();
+        return tournamentRepository.findByDateAfter(today);
+    }
+    public List<Tournament> getAllTournaments(String uid) {
         LocalDateTime today = LocalDateTime.now();
         List<Tournament> allTournaments = tournamentRepository.findByDateAfter(today);
-        Set<Tournament> userTournaments = userRepository.findById(userId)
+        Set<Tournament> userTournaments = userRepository.findByUid(uid)
                 .map(User::getTournaments)
                 .orElse(Collections.emptySet());
 
@@ -41,10 +42,10 @@ public class TournamentService {
                 .filter(tournament -> !userTournaments.contains(tournament))
                 .collect(Collectors.toList());
     }
-    public List<Tournament> getTournamentsByUser(Integer userId) {
+    public List<Tournament> getTournamentsByUser(String uid) {
         LocalDateTime today = LocalDateTime.now();
         List<Tournament> allTournaments = tournamentRepository.findByDateAfter(today);
-        Set<Tournament> userTournaments = userRepository.findById(userId)
+        Set<Tournament> userTournaments = userRepository.findByUid(uid)
                 .map(User::getTournaments)
                 .orElse(Collections.emptySet());
 
@@ -73,13 +74,13 @@ public class TournamentService {
     public Optional<Tournament> findById(Integer id) {
         return tournamentRepository.findById(id);
     }
-    public Tournament saveTournament(CreateTournamentDTO tournamentDTO) {
-        Organizer organizer = organizerRepository.findById(tournamentDTO.getOrganizerId()).orElseThrow(() -> new EntityNotFoundException("Organizer not found with id " + tournamentDTO.getOrganizerId()));
+    public Tournament saveTournament(CreateTournamentDTO tournamentDTO, Integer organizerId) {
+        Optional<Organizer> organizer = organizerRepository.findById(organizerId);
         Set<User> emptySet = new HashSet<>();
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
         LocalDateTime localDateTime = LocalDateTime.parse(tournamentDTO.getDate(), inputFormatter);
-        Tournament tournament = new Tournament(tournamentDTO.getName(), tournamentDTO.getParticipantsAmount(), tournamentDTO.getAddress(), localDateTime, tournamentDTO.getDescription(), organizer, emptySet);
+        Tournament tournament = new Tournament(tournamentDTO.getName(), tournamentDTO.getParticipantsAmount(), tournamentDTO.getAddress(), localDateTime, tournamentDTO.getDescription(), organizer.orElseThrow(), emptySet);
 
         return tournamentRepository.save(tournament);
     }
@@ -96,23 +97,22 @@ public class TournamentService {
             throw new EntityNotFoundException("Tournament not found with id " + id);
         }
     }
-    public void joinTournament(JoinTournamentDTO joinTournamentDTO) {
-        Tournament tournament = tournamentRepository.findById(joinTournamentDTO.getTournamentId())
-                .orElseThrow(() -> new EntityNotFoundException("Tournament not found with id " + joinTournamentDTO.getTournamentId()));
+    public void joinTournament(Integer tournamentId, String uid) {
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new EntityNotFoundException("Tournament not found with id " + tournamentId));
 
-        User user = userRepository.findById(joinTournamentDTO.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id " + joinTournamentDTO.getUserId()));
-
+        User user = userRepository.findByUid(uid)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id " + uid));
         tournament.getUsers().add(user);
 
         tournamentRepository.save(tournament);
     }
-    public boolean isUserRegisteredToTournament(Integer userId, Integer tournamentId) {
+    public boolean isUserRegisteredToTournament(String uid, Integer tournamentId) {
         Optional<Tournament> tournament = tournamentRepository.findById(tournamentId);
 
         if (tournament.isPresent()) {
             Set<User> usersRegistered = tournament.get().getUsers();
-            return usersRegistered.stream().anyMatch(user -> user.getUserId().equals(userId));
+            return usersRegistered.stream().anyMatch(user -> user.getUid().equals(uid));
         }
         return false;
     }
@@ -120,5 +120,11 @@ public class TournamentService {
     public List<User> getTournamentUsers(Integer tournamentId) {
         Set<User> users = userRepository.findByTournaments_TournamentId(tournamentId);
         return new ArrayList<>(users);
+    }
+
+    public Boolean isOrganizer(Integer organizerId, Integer tournamentId) {
+        Optional<Tournament> tournament = tournamentRepository.findById(tournamentId);
+        Optional<Organizer> organizer = organizerRepository.findById(organizerId);
+        return tournament.orElseThrow().getOrganizer().equals(organizer.orElseThrow());
     }
 }
