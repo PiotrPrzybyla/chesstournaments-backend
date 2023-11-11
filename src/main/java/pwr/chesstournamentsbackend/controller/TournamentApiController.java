@@ -7,6 +7,7 @@ import pwr.chesstournamentsbackend.dto.CreateTournamentDTO;
 import pwr.chesstournamentsbackend.dto.JoinTournamentDTO;
 import pwr.chesstournamentsbackend.dto.ResponseMessage;
 import pwr.chesstournamentsbackend.model.Tournament;
+import pwr.chesstournamentsbackend.model.User;
 import pwr.chesstournamentsbackend.service.TournamentService;
 
 import java.util.HashMap;
@@ -96,6 +97,14 @@ public class TournamentApiController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(userTournaments, HttpStatus.OK);
+    }
+    @GetMapping("/users/{tournamentId}")
+    public ResponseEntity<List<User>> getTournamentUsers(@PathVariable Integer tournamentId) {
+        List<User> tournamentUsers = tournamentService.getTournamentUsers(tournamentId);
+        if(tournamentUsers.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(tournamentUsers, HttpStatus.OK);
     }
 
 }

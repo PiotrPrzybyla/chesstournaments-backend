@@ -104,7 +104,6 @@ public class UserApiController {
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            System.out.println("dupa");
             session.invalidate();
             Cookie cookie = new Cookie("JSESSIONID", null);
             cookie.setPath(request.getContextPath());

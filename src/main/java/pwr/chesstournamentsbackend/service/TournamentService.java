@@ -116,4 +116,9 @@ public class TournamentService {
         }
         return false;
     }
+
+    public List<User> getTournamentUsers(Integer tournamentId) {
+        Set<User> users = userRepository.findByTournaments_TournamentId(tournamentId);
+        return new ArrayList<>(users);
+    }
 }
