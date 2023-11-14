@@ -30,4 +30,7 @@ public class User {
     @ManyToMany(mappedBy = "users")
     @JsonBackReference
     private Set<Tournament> tournaments = new HashSet<>();
+    @ManyToMany(mappedBy = "users")
+    @JsonBackReference
+    private Set<Group> groups = new HashSet<>();
 }

@@ -53,7 +53,7 @@ public class TournamentApiController {
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
     }
     @GetMapping("/isMember/{tournamentId}")
-    public ResponseEntity<Map<String, Boolean>> checkRegistration(
+    public ResponseEntity<Map<String, Boolean>> checkTournamentRegistration(
             @PathVariable Integer tournamentId,HttpServletRequest request
     ) {
         HttpSession session = request.getSession(false);
@@ -79,6 +79,21 @@ public class TournamentApiController {
                 String uid = (String) session.getAttribute("uid");
                 tournamentService.joinTournament(tournament_id, uid);
                 return new ResponseEntity<>(new ResponseMessage("User joined successfully to the tournament"), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(new ResponseMessage("User not logged"), HttpStatus.UNAUTHORIZED);
+
+        } catch(Exception e) {
+            return new ResponseEntity<>(new ResponseMessage(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @DeleteMapping("/leave/{tournament_id}")
+    public ResponseEntity<ResponseMessage> leaveUserFromTournament(@PathVariable Integer tournament_id, HttpServletRequest request) {
+        try {
+            HttpSession session = request.getSession(false);
+            if (session != null && session.getAttribute("uid") != null){
+                String uid = (String) session.getAttribute("uid");
+                tournamentService.leaveTournament(tournament_id, uid);
+                return new ResponseEntity<>(new ResponseMessage("User left successfully the tournament"), HttpStatus.OK);
             }
             return new ResponseEntity<>(new ResponseMessage("User not logged"), HttpStatus.UNAUTHORIZED);
 

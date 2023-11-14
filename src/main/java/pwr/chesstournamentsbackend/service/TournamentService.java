@@ -32,12 +32,21 @@ public class TournamentService {
         return tournamentRepository.findByDateAfter(today);
     }
     public List<Tournament> getAllTournaments(String uid) {
+
         LocalDateTime today = LocalDateTime.now();
         List<Tournament> allTournaments = tournamentRepository.findByDateAfter(today);
         Set<Tournament> userTournaments = userRepository.findByUid(uid)
                 .map(User::getTournaments)
                 .orElse(Collections.emptySet());
-
+        Optional<Organizer> organizer = organizerRepository.findByUserUid(uid);
+        if(organizer.isPresent()){
+            List<Tournament> organizerTournaments = tournamentRepository.findByOrganizer_OrganizerId(organizer.get().getOrganizerId());
+            return allTournaments.stream()
+                    .filter(tournament -> !organizerTournaments.contains(tournament))
+                    .toList().stream()
+                    .filter(tournament -> !userTournaments.contains(tournament))
+                    .collect(Collectors.toList());
+        }
         return allTournaments.stream()
                 .filter(tournament -> !userTournaments.contains(tournament))
                 .collect(Collectors.toList());
@@ -126,5 +135,16 @@ public class TournamentService {
         Optional<Tournament> tournament = tournamentRepository.findById(tournamentId);
         Optional<Organizer> organizer = organizerRepository.findById(organizerId);
         return tournament.orElseThrow().getOrganizer().equals(organizer.orElseThrow());
+    }
+
+    public void leaveTournament(Integer tournamentId, String uid) {
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new EntityNotFoundException("Tournament not found with id " + tournamentId));
+
+        User user = userRepository.findByUid(uid)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id " + uid));
+        tournament.getUsers().remove(user);
+
+        tournamentRepository.save(tournament);
     }
 }

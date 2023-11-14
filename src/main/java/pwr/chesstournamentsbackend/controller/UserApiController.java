@@ -13,11 +13,16 @@ import org.springframework.web.bind.annotation.*;
 import pwr.chesstournamentsbackend.dto.LoginDTO;
 import pwr.chesstournamentsbackend.dto.RegisterDTO;
 import pwr.chesstournamentsbackend.dto.ResponseMessage;
+import pwr.chesstournamentsbackend.dto.UpdateUserDTO;
+import pwr.chesstournamentsbackend.model.Group;
+import pwr.chesstournamentsbackend.model.Tournament;
 import pwr.chesstournamentsbackend.model.User;
 import pwr.chesstournamentsbackend.service.UserService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user")
@@ -40,6 +45,25 @@ public class UserApiController {
         }
         return  new ResponseEntity<>(new User(), HttpStatus.UNAUTHORIZED);
 
+    }
+    @PutMapping
+    public ResponseEntity<User> updateUser(@RequestBody UpdateUserDTO userDTO, HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute("uid") != null){
+            String uid = (String) session.getAttribute("uid");
+            Optional<User> user = userService.findUserByUid(uid);
+            if(user.isEmpty()){
+                return new ResponseEntity<>(new User(), HttpStatus.NO_CONTENT);
+            }
+            user.get().setName(userDTO.getName());
+            user.get().setSurname(userDTO.getSurname());
+            user.get().setLogin(userDTO.getUsername());
+            User updatedUser = userService.updateUser(user.get().getUserId(),user.get() );
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+
+        }
+        return new ResponseEntity<>(new User(), HttpStatus.UNAUTHORIZED);
     }
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {

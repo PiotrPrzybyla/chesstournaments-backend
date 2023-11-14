@@ -10,6 +10,5 @@ import java.util.List;
 public interface TournamentRepository extends JpaRepository<Tournament, Integer> {
     List<Tournament> findByDateAfter(LocalDateTime date);
     List<Tournament> findByDateBefore(LocalDateTime date);
-    List<Tournament> findByUsers_userId(Integer userId);
     List<Tournament> findByOrganizer_OrganizerId(Integer organizerId);
 }
