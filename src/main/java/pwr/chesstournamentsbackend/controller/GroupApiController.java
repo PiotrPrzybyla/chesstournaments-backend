@@ -6,11 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pwr.chesstournamentsbackend.dto.CreateGroupDTO;
+import pwr.chesstournamentsbackend.dto.GroupRatingDTO;
 import pwr.chesstournamentsbackend.dto.ResponseMessage;
 import pwr.chesstournamentsbackend.model.Category;
 import pwr.chesstournamentsbackend.model.Group;
 import pwr.chesstournamentsbackend.model.Tournament;
+import pwr.chesstournamentsbackend.model.User;
 import pwr.chesstournamentsbackend.service.GroupService;
+import pwr.chesstournamentsbackend.service.UserService;
+import pwr.chesstournamentsbackend.utils.GroupSortAlg;
 
 import java.util.*;
 
@@ -18,9 +22,10 @@ import java.util.*;
 @RequestMapping("/api/group")
 public class GroupApiController {
     public final GroupService groupService;
+    public final UserService userService;
 
-    public GroupApiController(GroupService groupService) {
-        this.groupService = groupService;
+    public GroupApiController(GroupService groupService, UserService userService) {
+        this.groupService = groupService; this.userService = userService;
     }
 
     @GetMapping("/{group_id}")
@@ -59,12 +64,14 @@ public class GroupApiController {
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
     }
     @GetMapping("/suggestions")
-    public ResponseEntity<List<Group>> getSuggestedGroups(HttpServletRequest request){
+    public ResponseEntity<List<GroupRatingDTO>> getSuggestedGroups(HttpServletRequest request){
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("uid") != null){
             String uid = (String) session.getAttribute("uid");
-            List<Group> groups = groupService.getSuggestedGroups(uid);
-            return new ResponseEntity<>(groups, HttpStatus.OK);
+            List<Group> groups = groupService.getOtherGroups(uid);
+            User user = userService.findUserByUid(uid).orElseThrow();
+            List<GroupRatingDTO> sortedGroups = GroupSortAlg.sortGroups(groups, user);
+            return new ResponseEntity<>(sortedGroups, HttpStatus.OK);
         }
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
     }

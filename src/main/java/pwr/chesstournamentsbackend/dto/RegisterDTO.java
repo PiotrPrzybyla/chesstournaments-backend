@@ -17,7 +17,7 @@ public class RegisterDTO {
     @JsonProperty
     private String surname;
     @JsonProperty
-    private String age;
+    private Integer age;
     @JsonProperty
     private Integer categoryId;
 }

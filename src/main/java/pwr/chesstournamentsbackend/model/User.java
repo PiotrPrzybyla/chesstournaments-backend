@@ -19,7 +19,7 @@ public class User {
     private String login;
     private String name;
     private String surname;
-    private String age;
+    private Integer age;
     private String uid;
     private String email;
     @ManyToOne

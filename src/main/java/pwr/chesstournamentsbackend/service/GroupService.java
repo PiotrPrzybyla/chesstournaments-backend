@@ -83,7 +83,7 @@ public class GroupService {
         groupRepository.save(group);
     }
 
-    public List<Group> getSuggestedGroups(String uid) {
+    public List<Group> getOtherGroups(String uid) {
 
         List<Group> suggestedGroups = groupRepository.findAll();
         Set<Group> userGroups = userRepository.findByUid(uid)
